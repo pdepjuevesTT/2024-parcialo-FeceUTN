@@ -1,8 +1,9 @@
 class Persona{
     var property cosas = []
-    var property formasDePago = []
-    var property metodoFavorito 
-    var property plata
+    var property formasDePago = [efectivo]
+    var property metodoFavorito
+    var property salario
+    var property efectivo = new Efectivo (saldo = 0) //Si o si tiene efectivo
 
     method usar(metodo, cosa) = metodo.usar(cosa, self)
     method usarFavorito(cosa) = self.usar(metodoFavorito, cosa) 
@@ -10,11 +11,19 @@ class Persona{
     method agregarCosa(cosa){
         cosas.add(cosa)
     }
+
+    method aumentarSueldo(cantidad){
+        salario += cantidad
+    }
+
+    method cobrarSueldo(){
+ // falta
+    }
 }
 
 class MetodoPago{
-    var property saldo
-    method condicion(costo) = costo <= saldo
+    var property saldo 
+    method condicion(costo, persona) = costo <= saldo
 
     method ganar(cantidad){
         saldo += cantidad
@@ -24,14 +33,11 @@ class MetodoPago{
         self.ganar(-cantidad)
     }
 
-    method pagar(cosa,persona){
-        self.gastar(cosa.precio(), persona)
-        persona.agregarCosa(cosa)
-    }
-
-    method usar(cosa, persona){
-        if(self.condicion(cosa.precio())){
-           self.pagar(cosa, persona) 
+    method usar(cosa, persona){  // ver posible optimizacion y abstraccion
+        const precio = cosa.precio()
+        if(self.condicion(precio, persona)){
+           self.gastar(precio, persona)
+           persona.agregarCosa(cosa)
         } else{
             throw new UserException (message = "No se puede usar esta forma de pago")
         }
@@ -39,15 +45,19 @@ class MetodoPago{
 
 }
 
-class Efectivo inherits MetodoPago {
-
-} //Falta convertir a objeto
-
-
-class Debito inherits MetodoPago{
-    var property duenios = []
+class Efectivo inherits MetodoPago{
 
 }
+
+class Debito inherits MetodoPago{
+
+}
+
+class CuentaMultiple inherits Debito{
+    const duenios = []
+    override method condicion (costo, persona) = super(costo, persona) and duenios.contains(persona)
+}
+
 
 class Credito inherits MetodoPago{
     var property montoPermitido
@@ -55,19 +65,10 @@ class Credito inherits MetodoPago{
     var property interes
 
     method calculoGasto(monto) = monto / cuotas * interes
+    override method condicion(costo, persona) = super(montoPermitido, persona)
 
     override method gastar(cantidad, persona){ // POSIBLE CONDICION EN SUPERCLASE
         persona.gastoMensual(self.calculoGasto(cantidad), cuotas)
-        
-    }
-}
-
-class CuentaBancaria{  // CONSIDERAR SUBCLASE CUENTACOMPARTIDA
-    var property duenios = [] 
-    var property saldo
-
-    method gastar (cantidad){
-        saldo -= cantidad
     }
 }
 
@@ -76,11 +77,7 @@ class Cosa{
 }
 
 /*
-Que falta: 
-1.
-Superclase metodo de pago
-Cuando no se pueda pagar (saldo y restricciones)
-Repeticion de codigo
+Sueldo
 */
 
 class UserException inherits Exception {}
