@@ -20,6 +20,8 @@ class Persona{
     method comprar(metodo, cosa) = metodo.usar(cosa, self)
     method comprarFavorito(cosa) = self.comprar(metodoFavorito, cosa) 
 
+
+// 2.Cambiar metodo de pago
     method cambiarFavorito(nuevo){
         metodoFavorito = formasDePago.anyOne()
     }
@@ -53,6 +55,8 @@ class Persona{
         efectivo.ganar(salario - costos)
     }
 
+
+// 3. Hacer que transcurra un mes
     method cambiarMes(){
         costos = 0  
         self.pagarCuotas(self.cuotasDelMes() + cuotasVencidas)
@@ -75,6 +79,10 @@ class Persona{
             self.registrarCuotas(monto, cuotas-1)
         }
     }
+
+// 4. Monto total de cuotas impagas
+    method cuotasImpagas() = cuotasPendientes + cuotasVencidas
+    method montoTotalImpagas() = self.cuotasImpagas().sum({cuota => cuota.valor()})
 }
 
 // 6. Persona que mas cosas tiene
