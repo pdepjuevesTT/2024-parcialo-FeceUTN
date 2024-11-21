@@ -1,0 +1,29 @@
+import persona.*
+import metodos.*
+import elementos.*
+
+describe "Compra tarjeta" {
+    const play5 = new Cosa (valor = 100)
+    const mansion = new Cosa (valor = 10000000000)
+    const visa = new Credito(saldo = 150, cuotas = 3, interes = 1.1)
+    const pepita = new Persona(salario = 250, metodoFavorito = visa)
+    test "Pepita compra play 5 "{
+        pepita.comprarFavorito(play5)
+        assert.that(pepita.cosas().contains(play5))
+    }
+    test "Pepita no puede comprar una mansion"{ // aca esta tirando la excepcion de usuario que puse, por lo que funciona
+        pepita.comprarFavorito(mansion)
+        assert.that(!pepita.cosas().contains(mansion))
+    }
+}
+
+describe "Cobra sueldo"{
+    const pepita = new Persona(salario = 250, metodoFavorito = visa, cuotasPendientes = [cuota])
+    const visa = new Credito(saldo = 150, cuotas = 3, interes = 1.1)
+    const cuota = new Cuota(valor = 50, mesAsignado = 1)
+
+    test "Pepita paga sus deudas"{
+        pepita.cambiarMes()
+        assert.that(pepita.cuotasPendientes().isEmpty())
+    }
+}
